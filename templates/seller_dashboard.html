@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+<form method = "POST">
+    <button type="submit" class="btn btn-primary" name="action" value="show_my" id="show">Show My Items</button>
+    <button type="submit" class="btn btn-primary" name="action" value="add_new" id="add">Add New Item</button>
+</form>
+
+{% if create==False %}
+<div class="card-body">
+    {% for listing in listings %}
+        <div class="box_item">
+            {{listing["Listing_ID"]}} : <h2 class="inline">{{listing["Auction_Title"]}}</h2> <br> 
+            <strong class="inline">{{listing["Product_Name"]}}</strong> ({{listing["Product_Description"]}})<br>
+            Category : {{listing["Category"]}} <br>
+            Quantity : {{listing["Quantity"]}} <br>
+            Reserve Price : $ {{listing["Reserve_Price"]}} <br>
+            Current Price : $ {{listing["Current_Bid_Price"]}} <br>
+            Maximum Bids : {{listing["Max_bids"]}}
+        <!-- </div> -->
+
+        <!-- <div class="card-body"> -->
+            <form method="POST" action="/modify_item">
+                Status : {% if listing["Status"] == 0 %} Inactive {% elif listing["Status"] == 1 %} Active {% endif %}
+                
+                <input type="hidden" name="lid" value="{{listing["Listing_ID"]}}">
+                <button type="submit" class="btn btn-primary inline-right" name="status" value={{listing["Status"]}} id="toggle">Toggle Status</button>
+            </form>
+            <br>
+        </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="box_item">
+    <form method="POST" action="/add_item">
+        Category:
+        <select class="form-control" name="category" id="pcat">
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+        Auction Title: <input type="text" name="title" required> <br>
+        Product Name: <input type="text" name="name" required> <br>
+        Product Description: <input type="text" name="desc" required> <br>
+        Quantity: <input type="number" name="qty" min="1" step="1" size="5" required> <br>
+        Reserve Price: $ <input type="number" name="Reserve Price" min="1" step="1" size="5" required> <br>
+        Maximum Bids: <input type="number" name="max_bids" min="1" step="1" size="5" required> <br>
+        <!-- <input type="hidden" name="seller" value="seller"> -->
+        <button type="submit" class="btn btn-primary" name="action" value="add_new" id="add">Add New Item</button>
+    </form>
+</div>
+
+{% endif %}
+{% endblock %}

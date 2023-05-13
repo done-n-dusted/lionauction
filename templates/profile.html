@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+
+<h1>This is the Profile of the User</h1><br>
+
+{% for k, v in data.items() %}
+    {{k}} : {{v}} <br>
+{% endfor %}
+
+<form method="POST">
+    <button type="submit" class="btn btn-primary"> Change Role </button>
+
+    <a href="/logout" class="btn btn-primary">Logout</a>
+</form>
+{% endblock %}

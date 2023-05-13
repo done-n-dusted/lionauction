@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+<div class="card-body">
+    <form method="POST" id="master_select">
+        <div class="form-group row">
+            <label for="parent_cat" class="col-sm-3 col-form-label">Select a parent category</label>
+            <div class="col-sm-6">
+                <select class="form-control" name="pcat" id="pcat" onchange="submitForm()">
+                    <option value="{{ current_category }}" selected>{{ current_category }}</option>
+                    {% for par_cat in categories %}
+                        {% if current_category != par_cat %}
+                            <option value="{{ par_cat }}">{{ par_cat }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="sub_cat" class="col-sm-3 col-form-label">Select a sub category</label>
+            <div class="col-sm-6">
+                <select class="form-control" name="psubcat" id="psubcat">
+                    <option value=" " selected></option>
+                    {% for par_sub_cat in sub_categories[request.form["pcat"]] %}    
+                    <!-- {% if current_sub_category != par_sub_cat %} -->
+                            <option value="{{ par_sub_cat }}">{{ par_sub_cat }}</option>
+                        <!-- {% endif %} -->
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="card-body">
+    {% for listing in av_listings %}
+        <div class="box_item">
+            {{listing["Listing_ID"]}} : <h2 class="inline">{{listing["Auction_Title"]}}</h2>  
+            <span class="inline-right">(Seller: {{listing["Seller_Email"]}}) </span> <br>
+            <strong class="inline">{{listing["Product_Name"]}}</strong> ({{listing["Product_Description"]}})<br>
+            {% if current_category == "All" %} 
+            Category : {{listing["Category"]}} <br>
+            {% endif %}
+            Quantity : {{listing["Quantity"]}} <br>
+            Current Price : $ {{listing["Current_Bid_Price"]}} <br>
+            Total Bids: {{listing["Total_Bids"]}} <br>
+            <!-- Maximum Bids : {{listing["Max_bids"]}} -->
+            {% if listing["Status"] == 1 %}
+                lb: {{listing["Last_Bidder"]}}
+
+                {% if listing["Total_Bids"] == listing["Max_bids"] and listing["Last_Bidder"] == user %}
+                    <span class="inline-right-bid"> 
+                        <form method="POST" action="/pay">
+                            <input type="hidden" name="item_id_bid" value="{{ listing["Listing_ID"] }}">
+                            <input type="hidden" name="prev_bid" value="{{listing["Current_Bid_Price"]}}">
+                            <input type="hidden" name="seller" value="{{listing["Seller_Email"]}}">
+                            Congratulations! You have locked the item!
+                            <button type="submit" class="btn btn-primary d-inline">PAY</button>
+                        </form>     
+                    </span> <br>
+                {% elif listing["Total_Bids"] == listing["Max_bids"] and listing["Last_Bidder"] != user %}
+                    <span class="inline-right-bid"><button class="btn btn-dark">Unavailable</button></span> <br>     
+                {% endif %}
+
+                {% if listing["Last_Bidder"] != user and listing["Total_Bids"] != listing["Max_bids"]%}
+                    <span class="inline-right-bid"> 
+                        <form method="POST" action="/bid">
+                            <input type="hidden" name="item_id_bid" value="{{ listing["Listing_ID"] }}">
+                            <input type="hidden" name="prev_bid" value="{{listing["Current_Bid_Price"]}}">
+                            <span style="font-size: 18px;">$ </span><input type="number" name="bid_val" id="bid_val" min="{{listing["Atleast_New_Price"]}}" size=5 required style="font-size: 14px;" step="0.5">
+                            <button type="submit" class="btn btn-primary d-inline">BID</button>
+                        </form>     
+                    </span> <br>
+                    
+                {% else %}
+                    
+                {% endif %}
+            {% elif listing["Status"] == 0 %}
+            <span class="inline-right-bid"><button class="btn btn-dark">Unavailable</button></span> <br>
+            <!-- Status : {% if listing["Status"] == 1 %} Available {% else %} SOLD {% endif %} -->
+            {% endif %}
+            <br>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+<script>
+    function submitForm(){
+        document.getElementById("master_select").submit();
+    }
+</script>
+
+{% endblock %}

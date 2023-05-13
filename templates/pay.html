@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %} Payments {% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <form method="POST" action="/pay_handle">
+        Check the following details:
+        User: {{data["Bidder"]}}<br>
+        Seller: {{data["Seller"]}}<br>
+        Price: $ {{data["Bid_Price"]}}<br>
+        Product Card
+        <div class="box_item">
+            {{listing["Listing_ID"]}} : <h2 class="inline">{{listing["Auction_Title"]}}</h2>  
+            <span class="inline-right">(Seller: {{listing["Seller_Email"]}}) </span> <br>
+            <strong class="inline">{{listing["Product_Name"]}}</strong> ({{listing["Product_Description"]}})<br>
+            Category : {{listing["Category"]}} <br>
+            Quantity : {{listing["Quantity"]}} <br>
+        </div>
+
+        Card: {{data["cc_no"]}} <br>
+
+        <input type="hidden" name="seller_email" value = "{{data["Seller"]}}">
+        <input type="hidden" name="listing_id" value = "{{listing["Listing_ID"]}}">
+        <input type="hidden" name="bidder_email" value = "{{data["Bidder"]}}">
+        <input type="hidden" name="price" value = "{{data["Bid_Price"]}}">
+        <button type="submit" class="btn btn-primary d-inline">Confirm Payment</button>
+
+    </form>
+</div>
+{% endblock %}
