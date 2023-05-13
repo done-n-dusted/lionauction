@@ -3,7 +3,6 @@
 ### CMPSC431W - Database Management Systems
 
 Author  :   Anurag Pendyala
-Email   :   app5997@psu.edu
 
 ## Folder Structure
 
